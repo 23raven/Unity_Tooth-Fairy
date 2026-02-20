@@ -1,74 +1,126 @@
+using System.Collections;
 using UnityEngine;
-
-#pragma warning disable CS0618
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 6f;
-    public float jumpForce = 9f;
-    public int maxJumps = 2;
+    public float speed = 5f;
+    public float jumpForce = 7f;
 
-    public Transform groundCheck;
-    public float groundRadius = 0.1f;
-    public LayerMask groundMask;
+    public int maxJumpCount = 2; // сколько прыжков можно сделать
+    private int jumpCount;
 
     private Rigidbody2D rb;
-    private int jumpsLeft;
-    private bool isGrounded;
+    private bool isGrounded = true; // позже лучше заменить на Raycast/Collider проверку
 
-    void Awake()
+    private Collider2D playerCollider;
+    private bool isDropping = false;
+    private Collider2D currentSurface;
+
+    void Start()
     {
+        playerCollider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
-        jumpsLeft = maxJumps;
+        jumpCount = maxJumpCount;
     }
 
     void Update()
     {
-        CheckGround();
         Move();
-        Jump();
+
+        if (TryDrop()) return;
+
+        HandleJump();
     }
 
     void Move()
     {
-        float x = 0f;
-        if (Input.GetKey(KeyCode.A)) x = -1f;
-        if (Input.GetKey(KeyCode.D)) x = 1f;
+        float moveInput = 0f;
 
-        rb.velocity = new Vector2(x * moveSpeed, rb.velocity.y);
+        if (Input.GetKey(KeyCode.A))
+            moveInput = -1f;
+        else if (Input.GetKey(KeyCode.D))
+            moveInput = 1f;
+
+        rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
+    }
+
+    void HandleJump()
+    {
+        // если нажата S — значит это попытка drop, не прыгаем
+        if (Input.GetKey(KeyCode.S)) return;
+
+        if (Input.GetKeyDown(KeyCode.Space) && jumpCount > 0)
+        {
+            Jump();
+        }
     }
 
     void Jump()
     {
-        if (!Input.GetKeyDown(KeyCode.Space)) return;
-        if (jumpsLeft <= 0) return;
-
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-        jumpsLeft--;
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        jumpCount -= 1;
     }
 
-    void CheckGround()
+    // пример простого сброса прыжков при касании земли
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        bool groundedNow = Physics2D.OverlapCircle(
-            groundCheck.position,
-            groundRadius,
-            groundMask
-        );
+        if (isDropping) return; // ⭐ ВАЖНО
 
-        if (groundedNow && !isGrounded)
-            jumpsLeft = maxJumps;
-
-        isGrounded = groundedNow;
+        if (collision.gameObject.CompareTag("Surface"))
+        {
+            isGrounded = true;
+            jumpCount = maxJumpCount;
+            currentSurface = collision.collider;
+        }
     }
 
-#if UNITY_EDITOR
-    void OnDrawGizmosSelected()
+    void OnCollisionExit2D(Collision2D collision)
     {
-        if (groundCheck == null) return;
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
+        if (collision.gameObject.CompareTag("Surface"))
+        {
+            isGrounded = false;
+            currentSurface = null;
+        }
     }
-#endif
+
+
+    IEnumerator DisableCollisionTemporarily(Collider2D platform)
+    {
+        isDropping = true;
+
+        Physics2D.IgnoreCollision(playerCollider, platform, true);
+
+        // лёгкий толчок вниз чтобы выйти из коллайдера
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, -3f);
+
+        yield return new WaitForSeconds(0.4f);
+
+        Physics2D.IgnoreCollision(playerCollider, platform, false);
+
+        isDropping = false;
+    }
+
+    bool TryDrop()
+    {
+        if (!isGrounded) return false;
+
+        if (currentSurface == null) return false;
+
+        // ⭐ если это Ground — НЕ даём падать
+        if (currentSurface.CompareTag("Ground"))
+            return false;
+
+        // ⭐ падать можно только через Surface
+        if (!currentSurface.CompareTag("Surface"))
+            return false;
+
+        if (Input.GetKey(KeyCode.S) && Input.GetKeyDown(KeyCode.Space))
+        {
+            StartCoroutine(DisableCollisionTemporarily(currentSurface));
+            return true;
+        }
+
+        return false;
+    }
+
 }
-
-#pragma warning restore CS0618
