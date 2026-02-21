@@ -65,11 +65,15 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (isDropping) return; // ⭐ ВАЖНО
+        
+        if (IsFloor(collision))
+        {
+            jumpCount = maxJumpCount;
+        }
 
         if (collision.gameObject.CompareTag("Surface"))
         {
             isGrounded = true;
-            jumpCount = maxJumpCount;
             currentSurface = collision.collider;
         }
     }
@@ -122,5 +126,12 @@ public class PlayerMovement : MonoBehaviour
 
         return false;
     }
+
+    bool IsFloor(Collision2D col)
+    {
+        return col.gameObject.CompareTag("Surface") ||
+               col.gameObject.CompareTag("Ground");
+    }
+
 
 }
