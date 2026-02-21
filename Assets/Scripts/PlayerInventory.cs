@@ -50,32 +50,20 @@ public class PlayerInventory : MonoBehaviour
 
         Debug.Log("Player вошёл в trigger: " + other.name);
 
-        // ⭐ Покупка зуба
-        if (other.CompareTag("Tooth"))
-        {
-            alreadyCollected = true;
-
-            Debug.Log("Pickup Tooth");
-
-            if (money >= 100)
-            {
-                money -= 100;
-                tooth += 1;
-            }
-
-            Destroy(other.gameObject);
-
-            // через кадр разрешаем снова подбирать
-            Invoke(nameof(ResetPickup), 0.1f);
-        }
-
         if (other.CompareTag("Money"))
         {
             Debug.Log("Обнаружен объект с тегом Money");
 
             FillMoney();
+
+            LevelRules rules = FindObjectOfType<LevelRules>();
+            if (rules != null)
+            {
+                rules.PlayerEnteredBase();
+            }
+
+            }
         }
-    }
 
     public void FillMoney()
     {
