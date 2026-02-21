@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Surface
   - Ground
+  - Money
+  - Tooth
   layers:
   - Default
   - TransparentFX
