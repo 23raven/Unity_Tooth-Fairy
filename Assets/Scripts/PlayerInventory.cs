@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -6,65 +7,87 @@ public class PlayerInventory : MonoBehaviour
     public int tooth = 0;
 
     public int toothValue = 100;
-    public int maxMoney = 1000; // ⭐ максимум денег
+    public int maxMoney = 1000;
 
-    private bool alreadyCollected = false;
+    private bool moneyProcessing = false;
 
-    // Добавить деньги
-    public void AddMoney(int amount)
+    private PlayerMovement movement;
+    private Rigidbody2D rb;
+
+    void Start()
     {
-        money += amount;
-        ClampMoney();
+        movement = GetComponent<PlayerMovement>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Добавить зубы
-    public void AddTooth(int amount)
-    {
-        tooth += amount;
-        money += amount * toothValue;
-        ClampMoney();
-    }
-
-    // Потратить деньги
-    public bool SpendMoney(int amount)
-    {
-        if (money < amount) return false;
-
-        money -= amount;
-        return true;
-    }
-
-    // ⭐ Ограничение денег
+    // -------------------------
+    // Ограничение денег
+    // -------------------------
     void ClampMoney()
     {
-        if (money > maxMoney)
-            money = maxMoney;
-
-        if (money < 0)
-            money = 0;
+        money = Mathf.Clamp(money, 0, maxMoney);
     }
 
+    // -------------------------
+    // Trigger вход
+    // -------------------------
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (alreadyCollected) return; // ⭐ защита от двойного вызова
-
         Debug.Log("Player вошёл в trigger: " + other.name);
 
         if (other.CompareTag("Money"))
         {
-            Debug.Log("Обнаружен объект с тегом Money");
+            if (moneyProcessing) return;
 
-            FillMoney();
+            moneyProcessing = true;
+            StartCoroutine(MoneyDelay());
+        }
+    }
 
-            LevelRules rules = FindObjectOfType<LevelRules>();
-            if (rules != null)
-            {
-                rules.PlayerEnteredBase();
-            }
+    // -------------------------
+    // Задержка для Money
+    // -------------------------
+    IEnumerator MoneyDelay()
+    {
+        Debug.Log("Money задержка началась");
 
-            }
+        // ⭐ остановить управление
+        if (movement != null)
+            movement.enabled = false;
+
+        // ⭐ полностью остановить физику
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
         }
 
+        // ⭐ здесь будет анимация
+        yield return new WaitForSeconds(1f);
+
+        FillMoney();
+
+        LevelRules rules = FindObjectOfType<LevelRules>();
+        if (rules != null)
+            rules.PlayerEnteredBase();
+
+        // ⭐ вернуть физику
+        if (rb != null)
+        {
+            rb.simulated = true;
+            rb.WakeUp();
+        }
+
+        // ⭐ вернуть управление
+        if (movement != null)
+            movement.enabled = true;
+
+        moneyProcessing = false;
+    }
+
+    // -------------------------
+    // Заполнение денег
+    // -------------------------
     public void FillMoney()
     {
         Debug.Log("Деньги ДО: " + money);
@@ -73,10 +96,4 @@ public class PlayerInventory : MonoBehaviour
 
         Debug.Log("Деньги теперь MAX = " + money);
     }
-
-    void ResetPickup()
-    {
-        alreadyCollected = false;
-    }
-
 }

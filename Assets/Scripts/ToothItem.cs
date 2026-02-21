@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class ToothItem : MonoBehaviour
 {
@@ -7,11 +8,11 @@ public class ToothItem : MonoBehaviour
 
     public int price = 100;
 
-    private bool picked = false; // ⭐ оставляем только ОДИН флаг
+    private bool picked = false;
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (picked) return; // ⭐ САМАЯ ПЕРВАЯ СТРОКА
+        if (picked) return;
 
         PlayerInventory inventory = other.GetComponent<PlayerInventory>();
         if (inventory == null) return;
@@ -24,8 +25,33 @@ public class ToothItem : MonoBehaviour
             return;
         }
 
-        picked = true; // ⭐ блокируем ВСЁ сразу
+        picked = true;
 
+        StartCoroutine(CollectDelay(inventory));
+    }
+
+    IEnumerator CollectDelay(PlayerInventory inventory)
+    {
+        Debug.Log("Tooth задержка началась");
+
+        PlayerMovement movement = inventory.GetComponent<PlayerMovement>();
+        Rigidbody2D rb = inventory.GetComponent<Rigidbody2D>();
+
+        // ⭐ остановить управление
+        if (movement != null)
+            movement.enabled = false;
+
+        // ⭐ полностью остановить физику
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
+        }
+
+        // ⭐ здесь будет анимация
+        yield return new WaitForSeconds(1f);
+
+        // ⭐ покупка
         inventory.money -= price;
         inventory.tooth += 1;
 
@@ -33,6 +59,17 @@ public class ToothItem : MonoBehaviour
 
         if (spawner != null)
             spawner.OnToothDestroyed(spawnPoint);
+
+        // ⭐ вернуть физику
+        if (rb != null)
+        {
+            rb.simulated = true;
+            rb.WakeUp();
+        }
+
+        // ⭐ вернуть управление
+        if (movement != null)
+            movement.enabled = true;
 
         Destroy(gameObject);
     }

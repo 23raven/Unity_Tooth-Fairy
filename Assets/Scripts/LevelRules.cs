@@ -46,7 +46,7 @@ public class LevelRules : MonoBehaviour
         UpdateToothGoalUI();  // ⭐ новое
 
         // --- ПРОИГРЫШ ---
-        if (time <= 0 && player.tooth < toothGoal)
+        if (time <= 0)
         {
             EndGame(false);
             return;
