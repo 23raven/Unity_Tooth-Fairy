@@ -35,7 +35,7 @@ public class PlayerInventory : MonoBehaviour
     {
         Debug.Log("Player вошёл в trigger: " + other.name);
 
-        if (other.CompareTag("Money"))
+        if (other.CompareTag("Money") && money != maxMoney)
         {
             if (moneyProcessing) return;
 
