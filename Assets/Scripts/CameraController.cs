@@ -2,8 +2,10 @@
 
 public class CameraController : MonoBehaviour
 {
-    public Transform player; // сюда перетаскиваешь Player в Inspector
+    public Transform player;
     public float smoothSpeed = 5f;
+
+    public float yOffset = 2f; // ⭐ насколько выше держать камеру
 
     void LateUpdate()
     {
@@ -11,8 +13,8 @@ public class CameraController : MonoBehaviour
 
         Vector3 targetPos = new Vector3(
             player.position.x,
-            player.position.y,
-            transform.position.z // ⭐ чтобы камера не меняла глубину
+            player.position.y + yOffset, // ⭐ добавили смещение
+            transform.position.z
         );
 
         transform.position = Vector3.Lerp(
