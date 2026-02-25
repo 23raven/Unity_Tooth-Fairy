@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ff21a9c765aae704d9f7cb07a3fb09b3
+guid: f120281e79da50d469df67ed6159c5a6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8396303145206541097
-    second: Cinema_0
+      213: 244484688046937412
+    second: Cafe_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cinema_0
+      name: Cafe_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 1210
-        height: 1310
+        height: 739
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 92be78c9939a58470800000000000000
-      internalID: 8396303145206541097
+      spriteID: 4455f084785946300800000000000000
+      internalID: 244484688046937412
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Cinema_0: 8396303145206541097
+      Cafe_0: 244484688046937412
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
