@@ -81,8 +81,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9501138, g: 0.8160377, b: 1, a: 1}
+  m_Sprite: {fileID: 166840473961943257, guid: 7eb4039853031224189bcb618f5bc5ff, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -185,3 +185,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToothItem
   spawner: {fileID: 8157319138505922303, guid: aa1e32dcf739463468e2dd1d7496eb45, type: 3}
   spawnPoint: {fileID: 3506564381090390319, guid: 9308cf51fabf5f744b18dd6a64021ed0, type: 3}
+  price: 100
