@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 8863666050209809443}
   - component: {fileID: 7388181488915240055}
   - component: {fileID: 1311535913358488292}
+  - component: {fileID: 2516479997688689193}
   m_Layer: 10
   m_Name: Tooth
   m_TagString: Tooth
@@ -186,3 +187,18 @@ MonoBehaviour:
   spawner: {fileID: 8157319138505922303, guid: aa1e32dcf739463468e2dd1d7496eb45, type: 3}
   spawnPoint: {fileID: 3506564381090390319, guid: 9308cf51fabf5f744b18dd6a64021ed0, type: 3}
   price: 100
+--- !u!114 &2516479997688689193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7796301052349212666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: add18a18d04bf7a4f8e33e4b3adf2e58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OffScreenIndicator
+  indicatorPrefab: {fileID: 5797252773599843981, guid: c35293dc0905bdb4b87b4d97de9fd7da, type: 3}
+  indicatorDistance: 700
+  separation: 120

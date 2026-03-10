@@ -1,19 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class OffScreenIndicator : MonoBehaviour
 {
-    public RectTransform indicatorUI; // UI стрелка
-    public Canvas canvas;
+    public GameObject indicatorPrefab;
+    public int indicatorDistance = 250;
+    public float separation = 40f;
 
+    private RectTransform indicator;
     private Camera cam;
+
+    static List<RectTransform> activeIndicators = new List<RectTransform>();
 
     void Start()
     {
         cam = Camera.main;
 
-        // делаем индикатор чуть прозрачным
-        Image img = indicatorUI.GetComponent<Image>();
+        Canvas canvas = FindObjectOfType<Canvas>();
+
+        GameObject ui = Instantiate(indicatorPrefab, canvas.transform);
+        indicator = ui.GetComponent<RectTransform>();
+
+        activeIndicators.Add(indicator);
+
+        Image img = indicator.GetComponent<Image>();
         Color c = img.color;
         c.a = 0.4f;
         img.color = c;
@@ -23,31 +34,56 @@ public class OffScreenIndicator : MonoBehaviour
     {
         Vector3 screenPos = cam.WorldToScreenPoint(transform.position);
 
-        bool isOffScreen =
-            screenPos.x <= 0 ||
-            screenPos.x >= Screen.width ||
-            screenPos.y <= 0 ||
-            screenPos.y >= Screen.height ||
+        bool offScreen =
+            screenPos.x < 0 || screenPos.x > Screen.width ||
+            screenPos.y < 0 || screenPos.y > Screen.height ||
             screenPos.z < 0;
 
-        if (!isOffScreen)
+        if (!offScreen)
         {
-            indicatorUI.gameObject.SetActive(false);
+            indicator.gameObject.SetActive(false);
             return;
         }
 
-        indicatorUI.gameObject.SetActive(true);
+        indicator.gameObject.SetActive(true);
 
-        Vector3 clampedPos = screenPos;
+        Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
 
-        clampedPos.x = Mathf.Clamp(clampedPos.x, 50, Screen.width - 50);
-        clampedPos.y = Mathf.Clamp(clampedPos.y, 50, Screen.height - 50);
+        Vector2 direction = ((Vector2)screenPos - screenCenter).normalized;
 
-        indicatorUI.position = clampedPos;
+        Vector2 indicatorPos = screenCenter + direction * indicatorDistance;
 
-        Vector3 dir = transform.position - cam.transform.position;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        // Проверяем пересечения
+        foreach (RectTransform other in activeIndicators)
+        {
+            if (other == indicator) continue;
 
-        indicatorUI.rotation = Quaternion.Euler(0, 0, angle);
+            float dist = Vector2.Distance(indicatorPos, other.position);
+
+            if (dist < separation)
+            {
+                float angleOffset = 10f * Mathf.Deg2Rad;
+
+                float angle = Mathf.Atan2(direction.y, direction.x);
+                angle += angleOffset;
+
+                direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                indicatorPos = screenCenter + direction * indicatorDistance;
+            }
+        }
+
+        indicator.position = indicatorPos;
+
+        float rot = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        indicator.rotation = Quaternion.Euler(0, 0, rot);
+    }
+
+    void OnDestroy()
+    {
+        if (indicator != null)
+        {
+            activeIndicators.Remove(indicator);
+            Destroy(indicator.gameObject);
+        }
     }
 }
