@@ -9,7 +9,12 @@ public class ToothItem : MonoBehaviour
     public int price = 100;
 
     private bool picked = false;
-
+    void Start()
+    {
+        Vector3 pos = transform.position;
+        pos.z = -1f;
+        transform.position = pos;
+    }
     void OnTriggerEnter2D(Collider2D other)
     {
         if (picked) return;
