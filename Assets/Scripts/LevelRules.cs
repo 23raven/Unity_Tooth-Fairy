@@ -24,9 +24,11 @@ public class LevelRules : MonoBehaviour
     public TMP_Text toothGoalText;  // ⭐ прогресс зубов
 
     public GameObject rulesUI;
+    AudioSource audioSource;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         startTime = time;
 
         Time.timeScale = 0f; // ⛔ стоп времени
@@ -160,10 +162,14 @@ public class LevelRules : MonoBehaviour
 
     public void StartGame()
     {
+        
         Time.timeScale = 1f; // ▶️ запустить время
 
         if (rulesUI != null)
             rulesUI.SetActive(false);
+
+        if (audioSource != null)
+            audioSource.Play();
     }
 
 }
