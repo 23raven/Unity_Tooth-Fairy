@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -14,10 +15,15 @@ public class PlayerInventory : MonoBehaviour
     private PlayerMovement movement;
     private Rigidbody2D rb;
 
+    public TextMeshProUGUI toothText;
+    public TextMeshProUGUI moneyText;
+
     void Start()
     {
         movement = GetComponent<PlayerMovement>();
         rb = GetComponent<Rigidbody2D>();
+
+        UpdateUI(); // ← сразу показать значения
     }
 
     // -------------------------
@@ -95,5 +101,19 @@ public class PlayerInventory : MonoBehaviour
         money = maxMoney;
 
         Debug.Log("Деньги теперь MAX = " + money);
+
+        UpdateUI();
     }
+
+
+
+    public void UpdateUI()
+    {
+        if (toothText != null)
+            toothText.text = "Tooth: " + tooth;
+
+        if (moneyText != null)
+            moneyText.text = "Money: " + money;
+    }
+
 }

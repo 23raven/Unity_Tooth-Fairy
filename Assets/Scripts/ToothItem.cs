@@ -33,6 +33,7 @@ public class ToothItem : MonoBehaviour
         picked = true;
 
         StartCoroutine(CollectDelay(inventory));
+        
     }
 
     IEnumerator CollectDelay(PlayerInventory inventory)

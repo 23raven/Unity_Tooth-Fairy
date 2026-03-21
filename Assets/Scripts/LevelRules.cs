@@ -139,6 +139,7 @@ public class LevelRules : MonoBehaviour
         if (toothGoalText == null || player == null) return;
 
         toothGoalText.text = player.tooth + " / " + toothGoal;
+        player.UpdateUI(); // ← ВОТ ЭТО ТЫ ЗАБЫЛ
     }
 
 }
