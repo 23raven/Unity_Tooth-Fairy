@@ -69,7 +69,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         // ⭐ здесь будет анимация
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.2f);
 
         FillMoney();
 

@@ -23,21 +23,37 @@ public class LevelRules : MonoBehaviour
     public TMP_Text timerText;      // ⭐ таймер сверху
     public TMP_Text toothGoalText;  // ⭐ прогресс зубов
 
+    public GameObject rulesUI;
+
     void Start()
     {
         startTime = time;
 
-        // ⭐ endGameUI выключен в начале
+        Time.timeScale = 0f; // ⛔ стоп времени
+
         if (endGameUI != null)
             endGameUI.SetActive(false);
 
-        // BackToBase скрыт на старте
         if (backToBaseText != null)
             backToBaseText.gameObject.SetActive(false);
+
+        if (rulesUI != null)
+            rulesUI.SetActive(true); // показать правила
     }
 
     void Update()
     {
+        // 👉 если игра ещё не началась
+        if (Time.timeScale == 0f)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StartGame();
+            }
+
+            return; // не выполнять остальной код
+        }
+
         if (gameEnded) return;
 
         time -= Time.deltaTime;
@@ -140,6 +156,14 @@ public class LevelRules : MonoBehaviour
 
         toothGoalText.text = player.tooth + " / " + toothGoal;
         player.UpdateUI(); // ← ВОТ ЭТО ТЫ ЗАБЫЛ
+    }
+
+    public void StartGame()
+    {
+        Time.timeScale = 1f; // ▶️ запустить время
+
+        if (rulesUI != null)
+            rulesUI.SetActive(false);
     }
 
 }
