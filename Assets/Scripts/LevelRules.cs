@@ -45,7 +45,10 @@ public class LevelRules : MonoBehaviour
 
     void Update()
     {
-        // 👉 если игра ещё не началась
+        // ❗ если игра закончена — полностью игнорируем любой ввод
+        if (gameEnded) return;
+
+        // 👉 если игра ещё не началась (rules экран)
         if (Time.timeScale == 0f)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -53,15 +56,13 @@ public class LevelRules : MonoBehaviour
                 StartGame();
             }
 
-            return; // не выполнять остальной код
+            return;
         }
-
-        if (gameEnded) return;
 
         time -= Time.deltaTime;
 
-        UpdateTimerUI();      // ⭐ новое
-        UpdateToothGoalUI();  // ⭐ новое
+        UpdateTimerUI();
+        UpdateToothGoalUI();
 
         // --- ПРОИГРЫШ ---
         if (time <= 0)
@@ -157,7 +158,7 @@ public class LevelRules : MonoBehaviour
         if (toothGoalText == null || player == null) return;
 
         toothGoalText.text = player.tooth + " / " + toothGoal;
-        player.UpdateUI(); // ← ВОТ ЭТО ТЫ ЗАБЫЛ
+        player.UpdateUI(); 
     }
 
     public void StartGame()
